@@ -46,6 +46,10 @@
 #include "ieee802154_s2-lp_qi.h"
 #include "ieee802154_s2-lp_types.h"
 
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/spi.h>
+#include <zephyr/logging/log.h>
+
 typedef S2LPStatus StatusBytes;
 
 /*!
@@ -103,6 +107,9 @@ typedef struct
   S2LPBus_Delay                Delay;
 } S2LP_IO_t;
 
+struct s2lp_config {
+  struct spi_dt_spec bus;
+}
 
 /*Structure to manage External PA */
 typedef enum

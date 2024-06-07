@@ -18,9 +18,6 @@
  * <h2><center>&copy; COPYRIGHT 2021 STMicroelectronics</center></h2>
  */
 
-#include <zephyr/kernel.h>
-#include <zephyr/drivers/spi.h>
-#include <zephyr/logging/log.h>
 #include "ieee802154_s2-lp.h"
 
 LOG_MODULE_REGISTER(ieee802154_s2lp, CONFIG_IEEE802154_DRIVER_LOG_LEVEL);
@@ -45,6 +42,33 @@ int32_t S2LP_RegisterBusIO(S2LP_IO_t *pIO)
     return S2LP_ERROR;
   }
   return S2LP_OK;
+
+void s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes) {
+  /*Trasmit header*/
+  const struct spi_buf_header tx_buf = 
+  {
+    .buf = pcHeader, 
+    .len = S2LP_CMD_SIZE
+  };
+  struct spi_buf_set_header tx =
+  {
+    .buffers = tx_buf,
+    .count = 1
+  }
+  if(cNbBytes) {
+    /*Transmit data if needed*/
+    const struct struct spi_buf tx = 
+    {
+      .buf = pcBuffer, 
+      .len = cNbBytes
+    };
+    struct spi_buf_set tx =
+    {
+      .buffers = tx,
+      .count = 1
+    }
+  }
+  spi_write_dt();
 }
 
 int32_t S2LP_Init( void )
@@ -70,6 +94,7 @@ uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBu
     uint16_t status;
   
     // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
+    s2lp_write_reg(header, pcBuffer, cNbBytes);
     
 
     ((uint8_t*)&status)[1]=header[0];
@@ -90,7 +115,8 @@ uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuf
     uint8_t header[S2LP_CMD_SIZE]={READ_HEADER,cRegAddress};
     uint16_t status;
 
-    IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
+    // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
+    s2lp_write_reg(header, pcBuffer, cNbBytes);
 
     ((uint8_t*)&status)[1]=header[0];
     ((uint8_t*)&status)[0]=header[1]; 
@@ -109,6 +135,7 @@ uint16_t S2LP_SendCommand(uint8_t cCommandCode)
   uint16_t status;
 
   // IO_func.WriteBuffer( header, NULL, 0 );
+  s2lp_write_reg(header, NULL, 0);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -128,6 +155,7 @@ StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
+  s2lp_write_reg(header, pcBuffer, cNbBytes);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -148,6 +176,7 @@ StatusBytes S2LP_ReadFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
+  s2lp_write_reg(header, pcBuffer, cNbBytes);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
