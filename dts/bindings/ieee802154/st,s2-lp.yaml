@@ -1,0 +1,15 @@
+# Copyright (c) 2024 Lumiad B.V.
+# SPDX-License-Identifier: Apache-2.0
+
+description: STMicroelectronics S2-LP Sub-GHz transceiver
+
+compatible: "st,s2-lp"
+
+include: spi-device.yaml
+
+properties:
+  sdn-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO connected to the SDN (shutdown) pin of the radio

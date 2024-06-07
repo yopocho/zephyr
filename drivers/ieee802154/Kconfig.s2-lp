@@ -1,0 +1,18 @@
+# STMicrocelectronics S2-LP configuration options
+
+# Copyright (c) 2024 Lumiad B.V.
+# SPDX-License-Identifier: Apache-2.0
+
+config IEEE802154_S2_LP
+    bool "STMicroelectronics S2-LP Sub-GHz transceiver"
+    default y
+    select SPI
+    depends on DT_HAS_ST_S2_LP_ENABLED
+
+# config IEEE802154_S2-LP_PLACEHOLDER_CONFIG
+#     bool "STMicroelectronics S2-LP Sub-GHz transceiver"
+#     default y
+#     select SPI
+#     depends on DT_HAS_ST_S2-LP_ENABLED
+#     help
+#       This option configures the radio yadayada

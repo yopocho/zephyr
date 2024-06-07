@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2024 Niels van der Zijden <nielsvanderzijden@lumiad.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&spi0 {
+    radio0: radio0@1 {
+        status = "okay";
+        compatible = "st,s2-lp";
+        reg = <1>;
+        spi-max-frequency = <1000000>;
+        duplex = <0>;
+        #io-channel-cells = <8>;
+        sdn-gpios = <&gpio1 0x2 GPIO_ACTIVE_LOW>;
+    };
+};
