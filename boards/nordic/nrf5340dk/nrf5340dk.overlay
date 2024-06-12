@@ -5,7 +5,7 @@
  */
 
 &spi0 {
-    radio0: radio0@1 {
+    radio0: radio0@0 {
         status = "okay";
         compatible = "st,s2-lp";
         reg = <1>;
