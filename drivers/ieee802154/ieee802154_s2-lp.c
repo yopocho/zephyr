@@ -88,13 +88,131 @@ int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, cons
   return 0;
 }
 
-int32_t S2LP_Init( void )
+int32_t S2LP_Init(const struct device *dev)
 {
-  if (IO_func.Init()<0)
-  {
-    return S2LP_ERROR;
+  // if (IO_func.Init()<0)
+  // {
+  //   return S2LP_ERROR;
+  // }
+  // return S2LP_OK;
+
+  const struct s2lp_config *config = dev->config;
+
+  if(!spi_is_ready_dt(&config->bus)) {
+    LOG_ERR("SPI bus %s is not ready", config->bus);
+    return -ENODEV
   }
-  return S2LP_OK;
+  
+  //TODO: Add zeohyr gpio inits
+  // struct gpio_dt_spec sdn_spec = GPIO_DT_SPEC_GET_OR();
+  
+  // gpio_pin_configure_dt();
+  
+  S2LPCmdStrobeSres();
+
+  //TODO: IRQ is not setup according to zephyr, FIXME
+  /*IRQ setup and init for S2LP GPIOs*/
+  SGpioInit xGpioIRQ= {
+    irq_gpio_selected,
+    S2LP_GPIO_MODE_DIGITAL_OUTPUT_LP,
+    S2LP_GPIO_DIG_OUT_IRQ
+  };
+
+  S2LPGpioInit(&xGpioIRQ);
+
+  //TODO: change over to some new struct with this data, refer to STM32Duino git
+  SRadioInit xRadioInit = {
+    config->lFrequencyBase,
+    config->ModulationSelect,
+    config->lDatarate,
+    config->lFreqDev,
+    config->lBandwidth
+  };
+
+  S2LPRadioInit(&xRadioInit);
+
+  //TODO: /perhaps/ make this variable, maybe add an enum with some relevant maximums for local jurisdictions
+  S2LPRadioSetMaxPALevel(S_DISABLE);
+  S2LPRadioSetPALeveldBm(7,12); //12 is randomly selected rn
+  S2LPRadioSetPALevelMaxIndex(7);
+
+  PktBasicInit xBasicInit={
+    16,                 /* Preamble length */
+    32,                 /* Sync length */
+    0x88888888,         /* Sync word */
+    S_ENABLE,           /* Variable length */
+    S_DISABLE,          /* Extended length field */
+    PKT_CRC_MODE_8BITS, /* CRC mode */
+    S_ENABLE,           /* Enable address */
+    S_DISABLE,          /* Enable FEC */
+    S_ENABLE            /* Enable Whitening */
+  };
+
+ S2LPPktBasicInit(&xBasicInit);
+
+  PktBasicAddressesInit xAddressInit={
+    S_ENABLE,          /* Filtering my address */
+    my_address,        /* My address */
+    S_ENABLE,          /* Filtering multicast address */
+    multicast_address, /* Multicast address */
+    S_ENABLE,          /* Filtering broadcast address */
+    broadcast_address  /* broadcast address */
+  };
+
+  S2LPPktBasicAddressesInit(&xAddressInit);
+
+  SCsmaInit xCsmaInit={
+    S_ENABLE,           /* Persistent mode enable/disable */
+    CSMA_PERIOD_64TBIT, /* CS Period */
+    3,                  /* CS Timeout */
+    5,                  /* Max number of backoffs */
+    0xFA21,             /* BU counter seed */
+    32                  /* CU prescaler */
+  };
+
+  S2LPCsmaInit(&xCsmaInit);
+  S2LPPacketHandlerSetRxPersistentMode(S_ENABLE);
+
+  SRssiInit xSRssiInit = {
+    .cRssiFlt = 14,
+    .xRssiMode = RSSI_STATIC_MODE,
+    .cRssiThreshdBm = -60,
+  };
+  S2LPRadioRssiInit(&xSRssiInit);
+
+  S2LP_RcoCalibration();
+
+  /* Enable PQI */
+  S2LPRadioSetPQIThreshold(0x00);
+  S2LPRadioSetPQIThreshold(S_ENABLE);
+
+  /* S2LP IRQs enable */
+  S2LPGpioIrqDeInit(NULL);
+  S2LPGpioIrqConfig(RX_DATA_READY,S_ENABLE);
+  S2LPGpioIrqConfig(TX_DATA_SENT , S_ENABLE);
+
+  /* clear FIFO if needed */
+  S2LPCmdStrobeFlushRxFifo();
+
+  /* Set infinite Timeout */
+  S2LPTimerSetRxTimerCounter(0);
+  S2LPTimerSetRxTimerStopCondition(ANY_ABOVE_THRESHOLD);
+
+  /* IRQ registers blanking */
+  S2LPGpioIrqClearStatus();
+
+  uint8_t tmp = 0x90;
+  S2LPSpiWriteRegisters(0x76, 1, &tmp);
+
+  /* Go to RX state */
+  S2LPCmdStrobeCommand(CMD_RX);
+
+  //TODO: Implement irq bindings and handler here
+  // attachInterrupt(irq_pin, irq_handler, FALLING);
+
+  
+
+  return 0;
 }
 
 
