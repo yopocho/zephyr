@@ -22,8 +22,6 @@
 
 LOG_MODULE_REGISTER(ieee802154_s2lp, CONFIG_IEEE802154_DRIVER_LOG_LEVEL);
 
-DEVICE_DT_DEFINE(0, NULL, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);
-
 #define MAX_RCO_ERR 3
 
 /*!
@@ -276,3 +274,9 @@ void S2LP_TCXOInit(void)
   tmp|=EXT_REF_REGMASK;
   S2LP_WriteRegister(XO_RCO_CONF0_ADDR, 1, &tmp);
 }
+
+static const struct s2lp_config s2lp_cfg = {
+    .bus = SPI_DT_SPEC_GET(0, SPI_WORD_SET(8) | SPI_TRANSFER_MSB, 0)
+};
+
+DEVICE_DT_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);
