@@ -405,6 +405,20 @@ void S2LP_TCXOInit(void)
   S2LP_WriteRegister(XO_RCO_CONF0_ADDR, 1, &tmp);
 }
 
+//TODO: BIG TODO: implement these mandatory zephyr api features. See ieee802154_b91.c and perhaps ieee802154_cc1200.c :)
+// https://docs.zephyrproject.org/apidoc/latest/structieee802154__radio__api.html
+static const struct ieee802154_radio_api s2lp_radio_api = {
+	.iface_api.init	= s2lp_iface_init,
+	.get_capabilities	= s2lp_get_capabilities,
+	.cca			= s2lp_cca,
+	.set_channel		= s2lp_set_channel,
+	.set_txpower		= s2lp_set_txpower,
+	.tx			= s2lp_tx,
+	.start			= s2lp_start,
+	.stop			= s2lp_stop,
+	.attr_get		= s2lp_attr_get,
+};
+
 static const struct s2lp_config s2lp_cfg = {
     .bus = SPI_DT_SPEC_INST_GET(0, SPI_WORD_SET(8) | SPI_TRANSFER_MSB, 0),
     .sdn = GPIO_DT_SPEC_INST_GET(0, sdn_gpios),
@@ -412,4 +426,6 @@ static const struct s2lp_config s2lp_cfg = {
 };
 
 //TODO: s2lp_data is currently irrelevant, a solution between the driver and zephyr is probably needed here
-// DEVICE_DT_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);
+DEVICE_DT_INST_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, 
+        POST_KERNEL, CONFIG_IEEE802154_S2LP_INIT_PRIORITY, 
+        &s2lp_radio_api);
