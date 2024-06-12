@@ -113,12 +113,25 @@ struct s2lp_config {
   struct spi_dt_spec bus;
   struct gpio_dt_spec sdn;
   struct gpio_dt_spec interrupt;
-  //TODO: Find appropriate place for these in some other struct, high importance
+
+  /**
+   * TODO: Find appropriate place for these in some other struct, high importance TODOTODOTODO FIXME
+   * VERY possibly that these might just have to be config options in Kconfig.s2-lp!
+   * cc1200 does something similar where it uses presets with preset known messages for easy setting registers.
+   * If I want fine control of all the radio setttings I'll either need functions for each setting to convert and
+   * set that specific setting (although reuse of some register set functions might be possible),
+   * or I'm going to need a giant header file of lookup tables that convert setting to register value/cmd
+   * which is what cc1200 does.
+  */
   // uint32_t lFrequencyBase;
   // uint32_t ModulationSelect;
   // uint32_t lDatarate;
   // uint32_t lFreqDev;
   // uint32_t lBandwidt;
+  // config->irq_gpio_selected,
+  // config->my_addr,
+  // config->multicast_addr,
+  // config->broadcast_addr
 };
 
 /*Structure to manage External PA */

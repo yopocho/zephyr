@@ -88,6 +88,7 @@ int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, cons
   return 0;
 }
 
+/** Driver Initialization */
 int32_t S2LP_Init(const struct device *dev)
 {
   // Leaving this codeblock here while figuring out what to do with it
