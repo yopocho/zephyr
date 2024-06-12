@@ -80,7 +80,7 @@ int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, cons
       .count = 1
     }
     
-    ret = spi_write_dt(&config->bus, &tx_data);
+    uint32_t ret = spi_write_dt(&config->bus, &tx_data);
     if (ret != 0) {
         return ret;
     }
