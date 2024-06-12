@@ -22,6 +22,8 @@
 
 LOG_MODULE_REGISTER(ieee802154_s2lp, CONFIG_IEEE802154_DRIVER_LOG_LEVEL);
 
+DEVICE_DT_DEFINE(0, NULL, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);
+
 #define MAX_RCO_ERR 3
 
 /*!
@@ -43,7 +45,18 @@ int32_t S2LP_RegisterBusIO(S2LP_IO_t *pIO)
   }
   return S2LP_OK;
 
-void s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes) {
+/**
+* @brief  Write single or multiple registers.
+* @param  cRegAddress: base register's address to be write
+* @param  cNbBytes: number of registers and bytes to be write
+* @param  pcBuffer: pointer to the buffer of values have to be written into registers
+* @param  dev: Devicetree handle for s2-lp radio
+* @return a value from spi_write().
+*/ 
+int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, const struct device *dev) {
+
+  const struct s2lp_config *config = dev->config;
+  
   /*Trasmit header*/
   const struct spi_buf_header tx_buf = 
   {
@@ -57,6 +70,7 @@ void s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes) {
   }
   if(cNbBytes) {
     /*Transmit data if needed*/
+    LOG_DBG("Writing to register(s):\n\rAddress: %x\n\rData: %x\n\r", *pcHeader, *pcBuffer);
     const struct struct spi_buf tx = 
     {
       .buf = pcBuffer, 
@@ -67,8 +81,13 @@ void s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes) {
       .buffers = tx,
       .count = 1
     }
-  }
-  spi_write_dt();
+    
+    ret = spi_write_dt(&config->bus, &tx_data);
+    if (ret != 0) {
+        return ret;
+    }
+
+  return 0;
 }
 
 int32_t S2LP_Init( void )
@@ -88,13 +107,13 @@ int32_t S2LP_Init( void )
 * @param  pcBuffer: pointer to the buffer of values have to be written into registers
 * @retval Device status
 */ 
-uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer )
+uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
 {
     uint8_t header[S2LP_CMD_SIZE]={WRITE_HEADER,cRegAddress};
     uint16_t status;
   
     // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-    s2lp_write_reg(header, pcBuffer, cNbBytes);
+    s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
     
 
     ((uint8_t*)&status)[1]=header[0];
@@ -110,13 +129,13 @@ uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBu
 * @param  pcBuffer: pointer to the buffer of registers' values read
 * @retval Device status
 */
-uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer )
+uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
 {
     uint8_t header[S2LP_CMD_SIZE]={READ_HEADER,cRegAddress};
     uint16_t status;
 
     // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-    s2lp_write_reg(header, pcBuffer, cNbBytes);
+    s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
 
     ((uint8_t*)&status)[1]=header[0];
     ((uint8_t*)&status)[0]=header[1]; 
@@ -129,13 +148,13 @@ uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuf
 * @param  cCommandCode: command code to be sent
 * @retval Device status
 */
-uint16_t S2LP_SendCommand(uint8_t cCommandCode)
+uint16_t S2LP_SendCommand(uint8_t cCommandCode, const struct device *dev)
 {
   uint8_t header[S2LP_CMD_SIZE]={COMMAND_HEADER,cCommandCode};
   uint16_t status;
 
   // IO_func.WriteBuffer( header, NULL, 0 );
-  s2lp_write_reg(header, NULL, 0);
+  s2lp_write_reg(header, NULL, 0, dev);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -149,13 +168,13 @@ uint16_t S2LP_SendCommand(uint8_t cCommandCode)
 * @param  pcBuffer: pointer to data to write
 * @retval Device status
 */
-StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
+StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
 {
   uint8_t header[S2LP_CMD_SIZE]={WRITE_HEADER,LINEAR_FIFO_ADDRESS};
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-  s2lp_write_reg(header, pcBuffer, cNbBytes);
+  s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -170,13 +189,13 @@ StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
 * @param  pcBuffer: pointer to data read from RX FIFO
 * @retval Device status
 */
-StatusBytes S2LP_ReadFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
+StatusBytes S2LP_ReadFIFO(uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
 {
   uint8_t header[S2LP_CMD_SIZE]={READ_HEADER,LINEAR_FIFO_ADDRESS};
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-  s2lp_write_reg(header, pcBuffer, cNbBytes);
+  s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];

@@ -47,6 +47,7 @@
 #include "ieee802154_s2-lp_types.h"
 
 #include <zephyr/kernel.h>
+#include <zephyr/device.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/logging/log.h>
 
@@ -109,7 +110,7 @@ typedef struct
 
 struct s2lp_config {
   struct spi_dt_spec bus;
-}
+};
 
 /*Structure to manage External PA */
 typedef enum
