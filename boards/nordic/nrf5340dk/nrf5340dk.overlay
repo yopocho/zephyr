@@ -5,13 +5,11 @@
  */
 
 &spi0 {
-    radio0: radio0@0 {
+    s2lp0: s2lp@1 {
         status = "okay";
         compatible = "st,s2-lp";
         reg = <1>;
         spi-max-frequency = <1000000>;
-        duplex = <0>;
-        #io-channel-cells = <8>;
-        sdn-gpios = <&gpio1 0x2 GPIO_ACTIVE_LOW>;
+        sdn-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
     };
 };
