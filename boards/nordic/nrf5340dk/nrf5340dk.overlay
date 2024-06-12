@@ -11,5 +11,8 @@
         reg = <1>;
         spi-max-frequency = <1000000>;
         sdn-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
+        interrupt-gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
     };
 };

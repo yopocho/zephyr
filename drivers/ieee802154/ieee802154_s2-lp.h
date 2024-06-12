@@ -50,6 +50,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/drivers/gpio.h>
 
 typedef S2LPStatus StatusBytes;
 
@@ -110,6 +111,14 @@ typedef struct
 
 struct s2lp_config {
   struct spi_dt_spec bus;
+  struct gpio_dt_spec sdn;
+  struct gpio_dt_spec interrupt;
+  //TODO: Find appropriate place for these in some other struct, high importance
+  // uint32_t lFrequencyBase;
+  // uint32_t ModulationSelect;
+  // uint32_t lDatarate;
+  // uint32_t lFreqDev;
+  // uint32_t lBandwidt;
 };
 
 /*Structure to manage External PA */

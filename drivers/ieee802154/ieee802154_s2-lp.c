@@ -54,7 +54,7 @@ int32_t S2LP_RegisterBusIO(S2LP_IO_t *pIO)
 int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, const struct device *dev) {
 
   const struct s2lp_config *config = dev->config;
-  
+
   /*Trasmit header*/
   const struct spi_buf_header tx_buf = 
   {
@@ -90,6 +90,8 @@ int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, cons
 
 int32_t S2LP_Init(const struct device *dev)
 {
+  // Leaving this codeblock here while figuring out what to do with it
+
   // if (IO_func.Init()<0)
   // {
   //   return S2LP_ERROR;
@@ -98,15 +100,25 @@ int32_t S2LP_Init(const struct device *dev)
 
   const struct s2lp_config *config = dev->config;
 
+  /* Configure GPIOs */
+	if (!gpio_is_ready_dt(&config->interrupt)) {
+		LOG_ERR("GPIO port %s is not ready",
+			config->interrupt.port->name);
+		return -ENODEV;
+	}
+	gpio_pin_configure_dt(&config->interrupt, GPIO_INPUT);
+
+  if(!gpio_is_ready_dt(&config->sdn)) {
+    LOG_ERR("GPIO port %s is not ready",
+      config->sdn.port->name);
+    return -ENODEV
+  }
+  gpio_pin_configure_dt(&config->sdn, GPIO_OUTPUT);
+
   if(!spi_is_ready_dt(&config->bus)) {
     LOG_ERR("SPI bus %s is not ready", config->bus);
     return -ENODEV
   }
-  
-  //TODO: Add zeohyr gpio inits
-  // struct gpio_dt_spec sdn_spec = GPIO_DT_SPEC_GET_OR();
-  
-  // gpio_pin_configure_dt();
   
   S2LPCmdStrobeSres();
 
@@ -394,7 +406,10 @@ void S2LP_TCXOInit(void)
 }
 
 static const struct s2lp_config s2lp_cfg = {
-    .bus = SPI_DT_SPEC_GET(0, SPI_WORD_SET(8) | SPI_TRANSFER_MSB, 0)
+    .bus = SPI_DT_SPEC_INST_GET(0, SPI_WORD_SET(8) | SPI_TRANSFER_MSB, 0),
+    .sdn = GPIO_DT_SPEC_INST_GET(0, sdn_gpios),
+    .interrupt = GPIO_DT_SPEC_INST_GET(0, int_gpios)
 };
 
-DEVICE_DT_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);
+//TODO: s2lp_data is currently irrelevant, a solution between the driver and zephyr is probably needed here
+// DEVICE_DT_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, POST_KERNEL, CONFIG_SPI_INIT_PRIORITY, NULL);

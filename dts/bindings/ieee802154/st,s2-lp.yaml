@@ -13,3 +13,9 @@ properties:
     required: true
     description: |
       GPIO connected to the SDN (shutdown) pin of the radio
+
+  interrupt-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO connected to the interrupt pin of the radio.

@@ -84,6 +84,7 @@
 				reg = <0x4>;
 				spi-max-frequency = <0>;
 				sdn-gpios = <&test_gpio 0 0>;
+				interrupt-gpios = <&test_gpio 0 0>;
 				status = "okay";
 			};
 		};
