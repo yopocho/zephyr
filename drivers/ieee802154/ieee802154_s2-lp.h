@@ -114,8 +114,9 @@ struct s2lp_config {
   struct gpio_dt_spec sdn;
   struct gpio_dt_spec interrupt;
 
+  //TODO: zephyr CONFIG settings
   /**
-   * TODO: Find appropriate place for these in some other struct, high importance TODOTODOTODO FIXME
+   * Find appropriate place for these in some other struct, high importance TODOTODOTODO FIXME
    * VERY possibly that these might just have to be config options in Kconfig.s2-lp!
    * cc1200 does something similar where it uses presets with preset known messages for easy setting registers.
    * If I want fine control of all the radio setttings I'll either need functions for each setting to convert and

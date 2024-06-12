@@ -123,17 +123,17 @@ int32_t S2LP_Init(const struct device *dev)
   
   S2LPCmdStrobeSres();
 
-  //TODO: IRQ is not setup according to zephyr, FIXME
+  //TODO:  Add irq_gpio_selected as CONFIG option, the format of this will change, see S2LPGpioPin enum
   /*IRQ setup and init for S2LP GPIOs*/
   SGpioInit xGpioIRQ= {
-    irq_gpio_selected,
+    S2LP_GPIO_3, //changed out irq_gpio_selected for hard coded value for testing purposes
     S2LP_GPIO_MODE_DIGITAL_OUTPUT_LP,
     S2LP_GPIO_DIG_OUT_IRQ
   };
 
   S2LPGpioInit(&xGpioIRQ);
 
-  //TODO: change over to some new struct with this data, refer to STM32Duino git
+  //TODO: Add these as CONFIG options, disregard current format, will change when implementing it
   SRadioInit xRadioInit = {
     config->lFrequencyBase,
     config->ModulationSelect,
