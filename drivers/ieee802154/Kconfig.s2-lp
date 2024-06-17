@@ -3,16 +3,70 @@
 # Copyright (c) 2024 Lumiad B.V.
 # SPDX-License-Identifier: Apache-2.0
 
-config IEEE802154_S2_LP
+menuconfig IEEE802154_S2_LP
     bool "STMicroelectronics S2-LP Sub-GHz transceiver"
     default y
     select SPI
+    select GPIO
     depends on DT_HAS_ST_S2_LP_ENABLED
+    help
+      Enables the STMicroelectronics S2-LP sub-GHz radio driver
 
-# config IEEE802154_S2-LP_PLACEHOLDER_CONFIG
-#     bool "STMicroelectronics S2-LP Sub-GHz transceiver"
-#     default y
-#     select SPI
-#     depends on DT_HAS_ST_S2-LP_ENABLED
-#     help
-#       This option configures the radio yadayada
+if IEEE802154_S2_LP
+
+config IEEE802154_S2LP_INIT_PRIORITY
+    int "Initialization priority"
+    default 80
+    help
+      S2-LP initialization priority
+
+config IEEE802154_S2LP_IRQ_GPIO_SELECTED
+    int "Select IRQ GPIO"
+    default 3
+    range 0 3
+    help
+      Select the S2LP GPIO pin to be used as IRQ pin
+
+config IEEE802154_S2LP_DEFAULT_PRESET
+    bool "ISO/IEC 14543-3-10 preset"
+    default y
+    help
+      Enable ISO/IEC 14543-3-10 preset (868,3MHz, 125kbps, OOK modulation, 62,5kHz frequency deviation) )
+
+config IEEE802154_S2LP_RANDOM_MAC
+	bool "Random MAC address"
+	default y
+	help
+	  Generate a random MAC address dynamically.
+
+if ! IEEE802154_S2LP_RANDOM_MAC
+
+config IEEE802154_S2LP_MAC4
+	hex "MAC Address Byte 4"
+	default 0
+	range 0 0xff
+	help
+	  This is the byte 4 of the MAC address.
+
+config IEEE802154_S2LP_MAC5
+	hex "MAC Address Byte 5"
+	default 0
+	range 0 0xff
+	help
+	  This is the byte 5 of the MAC address.
+
+config IEEE802154_S2LP_MAC6
+	hex "MAC Address Byte 6"
+	default 0
+	range 0 0xff
+	help
+	  This is the byte 6 of the MAC address.
+
+config IEEE802154_S2LP_MAC7
+	hex "MAC Address Byte 7"
+	default 0
+	range 0 0xff
+	help
+	  This is the byte 7 of the MAC address.
+endif
+endif
