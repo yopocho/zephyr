@@ -3,7 +3,7 @@
 
 description: STMicroelectronics S2-LP Sub-GHz transceiver
 
-compatible: "st,s2-lp"
+compatible: "st,s2lp"
 
 include: spi-device.yaml
 

@@ -7,7 +7,7 @@
 &spi0 {
     s2lp0: s2lp@1 {
         status = "okay";
-        compatible = "st,s2-lp";
+        compatible = "st,s2lp";
         reg = <1>;
         spi-max-frequency = <1000000>;
         sdn-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;

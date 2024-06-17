@@ -79,8 +79,8 @@
 				status = "okay";
 			};
 						
-			test_spi_s2-lp: s2-lp@4 {
-				compatible = "st,s2-lp";
+			test_spi_s2lp: s2lp@4 {
+				compatible = "st,s2lp";
 				reg = <0x4>;
 				spi-max-frequency = <0>;
 				sdn-gpios = <&test_gpio 0 0>;

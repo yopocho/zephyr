@@ -80,7 +80,7 @@ source "drivers/ieee802154/Kconfig.dw1000"
 
 source "drivers/ieee802154/Kconfig.uart_pipe"
 
-source "drivers/ieee802154/Kconfig.s2-lp"
+source "drivers/ieee802154/Kconfig.s2lp"
 
 config IEEE802154_2015
 	bool "Support for IEEE 802.15.4-2015 frames (DEPRECATED)"

@@ -3,16 +3,16 @@
 # Copyright (c) 2024 Lumiad B.V.
 # SPDX-License-Identifier: Apache-2.0
 
-menuconfig IEEE802154_S2_LP
+menuconfig IEEE802154_S2LP
     bool "STMicroelectronics S2-LP Sub-GHz transceiver"
     default y
     select SPI
     select GPIO
-    depends on DT_HAS_ST_S2_LP_ENABLED
+    depends on DT_HAS_ST_S2LP_ENABLED
     help
       Enables the STMicroelectronics S2-LP sub-GHz radio driver
 
-if IEEE802154_S2_LP
+if IEEE802154_S2LP
 
 config IEEE802154_S2LP_INIT_PRIORITY
     int "Initialization priority"
