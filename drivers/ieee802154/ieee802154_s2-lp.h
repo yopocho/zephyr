@@ -109,6 +109,31 @@ typedef struct
   S2LPBus_Delay                Delay;
 } S2LP_IO_t;
 
+
+struct s2lp_config_base {
+  uint32_t lFrequencyBase = 868300000;
+  uint32_t ModulationSelect = MOD_ASK_OOK;
+  uint32_t lDatarate = 125000;
+  uint32_t lFreqDev = 62500;
+  uint32_t lBandwidt = 100000;
+  // config->my_addr,
+  // config->multicast_addr,
+  // config->broadcast_addr
+};
+
+#ifdef CONFIG_IEEE802154_S2LP_DEFAULT_PRESET
+struct s2lp_config_base s2lp_base_config {
+  .lFrequencyBase = 868300000;
+  .ModulationSelect = MOD_ASK_OOK;
+  .lDatarate = 125000;
+  .lFreqDev = 62500;
+  .lBandwidt = 100000;
+  // config->my_addr,
+  // config->multicast_addr,
+  // config->broadcast_addr
+};
+#endif
+
 struct s2lp_config {
   struct spi_dt_spec bus;
   struct gpio_dt_spec sdn;
@@ -124,15 +149,6 @@ struct s2lp_config {
    * or I'm going to need a giant header file of lookup tables that convert setting to register value/cmd
    * which is what cc1200 does.
   */
-  // uint32_t lFrequencyBase;
-  // uint32_t ModulationSelect;
-  // uint32_t lDatarate;
-  // uint32_t lFreqDev;
-  // uint32_t lBandwidt;
-  // config->irq_gpio_selected,
-  // config->my_addr,
-  // config->multicast_addr,
-  // config->broadcast_addr
 };
 
 /*Structure to manage External PA */

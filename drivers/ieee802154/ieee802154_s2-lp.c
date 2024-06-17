@@ -122,24 +122,23 @@ int32_t S2LP_Init(const struct device *dev)
   }
   
   S2LPCmdStrobeSres();
-
-  //TODO:  Add irq_gpio_selected as CONFIG option, the format of this will change, see S2LPGpioPin enum
+  
   /*IRQ setup and init for S2LP GPIOs*/
   SGpioInit xGpioIRQ= {
-    S2LP_GPIO_3, //changed out irq_gpio_selected for hard coded value for testing purposes
+    (uint8_t)CONFIG_IEEE802154_S2LP_IRQ_GPIO_SELECTED,
     S2LP_GPIO_MODE_DIGITAL_OUTPUT_LP,
     S2LP_GPIO_DIG_OUT_IRQ
   };
 
   S2LPGpioInit(&xGpioIRQ);
 
-  //TODO: Add these as CONFIG options, disregard current format, will change when implementing it
+  //TODO: Add these to some struct in ieee802154_s2-lp.h or somewhere suitable 
   SRadioInit xRadioInit = {
-    config->lFrequencyBase,
-    config->ModulationSelect,
-    config->lDatarate,
-    config->lFreqDev,
-    config->lBandwidth
+    s2lp_base_config.lFrequencyBase,
+    s2lp_base_config.ModulationSelect,
+    s2lp_base_config.lDatarate,
+    s2lp_base_config.lFreqDev,
+    s2lp_base_config.lBandwidt
   };
 
   S2LPRadioInit(&xRadioInit);
@@ -149,6 +148,7 @@ int32_t S2LP_Init(const struct device *dev)
   S2LPRadioSetPALeveldBm(7,12); //12 is randomly selected rn
   S2LPRadioSetPALevelMaxIndex(7);
 
+  //TODO: Add accurate settings for these
   PktBasicInit xBasicInit={
     16,                 /* Preamble length */
     32,                 /* Sync length */
@@ -163,6 +163,7 @@ int32_t S2LP_Init(const struct device *dev)
 
  S2LPPktBasicInit(&xBasicInit);
 
+  //TODO: Add addresses
   PktBasicAddressesInit xAddressInit={
     S_ENABLE,          /* Filtering my address */
     my_address,        /* My address */
@@ -174,6 +175,7 @@ int32_t S2LP_Init(const struct device *dev)
 
   S2LPPktBasicAddressesInit(&xAddressInit);
 
+  //TODO: CSMA settings, could possibly be added to Kconfig
   SCsmaInit xCsmaInit={
     S_ENABLE,           /* Persistent mode enable/disable */
     CSMA_PERIOD_64TBIT, /* CS Period */
@@ -186,6 +188,7 @@ int32_t S2LP_Init(const struct device *dev)
   S2LPCsmaInit(&xCsmaInit);
   S2LPPacketHandlerSetRxPersistentMode(S_ENABLE);
 
+  //TODO: Possibly add these to Kconfig
   SRssiInit xSRssiInit = {
     .cRssiFlt = 14,
     .xRssiMode = RSSI_STATIC_MODE,
