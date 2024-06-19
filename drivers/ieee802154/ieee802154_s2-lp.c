@@ -130,6 +130,8 @@ int32_t S2LP_Init(const struct device *dev)
     S2LP_GPIO_DIG_OUT_IRQ
   };
 
+  LOG_DBG("IRQ GPIO: %d\n", xGpioIRQ.nIRQ);
+
   S2LPGpioInit(&xGpioIRQ);
 
   //TODO: Add these to some struct in ieee802154_s2-lp.h or somewhere suitable 
@@ -140,6 +142,13 @@ int32_t S2LP_Init(const struct device *dev)
     s2lp_base_config.lFreqDev,
     s2lp_base_config.lBandwidt
   };
+
+  LOG_DBG("Frequency: %d\n", xRadioInit.lFrequencyBase);
+  LOG_DBG("Modulation: %d\n", xRadioInit.ModulationSelect);
+  LOG_DBG("Datarate: %d\n", xRadioInit.lDatarate);
+  LOG_DBG("Frequency Deviation: %d\n", xRadioInit.lFreqDev);
+  LOG_DBG("Bandwidth: %d\n", xRadioInit.lBandwidt);
+  
 
   S2LPRadioInit(&xRadioInit);
 
@@ -166,11 +175,11 @@ int32_t S2LP_Init(const struct device *dev)
   //TODO: Add addresses
   PktBasicAddressesInit xAddressInit={
     S_ENABLE,          /* Filtering my address */
-    my_address,        /* My address */
+    s2lp_base_config.my_address,        /* My address */
     S_ENABLE,          /* Filtering multicast address */
-    multicast_address, /* Multicast address */
+    s2lp_base_config.multicast_address, /* Multicast address */
     S_ENABLE,          /* Filtering broadcast address */
-    broadcast_address  /* broadcast address */
+    s2lp_base_config.broadcast_address  /* broadcast address */
   };
 
   S2LPPktBasicAddressesInit(&xAddressInit);
