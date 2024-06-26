@@ -133,7 +133,7 @@
  *         contains the configuration information for the specified S2LP GPIO.
  * @retval None.
  */
-void S2LPGpioInit(SGpioInit* pxGpioInitStruct)
+void S2LPGpioInit(SGpioInit* pxGpioInitStruct, dev)
 {
   uint8_t tmp;
 
@@ -142,7 +142,7 @@ void S2LPGpioInit(SGpioInit* pxGpioInitStruct)
   s_assert_param(IS_S2LP_GPIO_IO(pxGpioInitStruct->xS2LPGpioIO));
 
   tmp = ((uint8_t)(pxGpioInitStruct->xS2LPGpioMode) | (uint8_t)(pxGpioInitStruct->xS2LPGpioIO));
-  *(uint8_t*)&g_xStatus = S2LPSpiWriteRegisters(pxGpioInitStruct->xS2LPGpioPin, 1, &tmp);
+  *(uint8_t*)&g_xStatus = S2LPSpiWriteRegisters(pxGpioInitStruct->xS2LPGpioPin, 1, &tmp, dev);
 
 }
 
