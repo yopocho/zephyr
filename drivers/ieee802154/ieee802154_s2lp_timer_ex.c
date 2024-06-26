@@ -21,9 +21,9 @@
  *
  */
 
-#include "ieee802154_s2-lp_timer.h"
-#include "ieee802154_s2-lp_timer_ex.h"
-#include "ieee802154_s2-lp_registers.h"
+#include "ieee802154_s2lp_timer.h"
+#include "ieee802154_s2lp_timer_ex.h"
+#include "ieee802154_s2lp_registers.h"
 
 void S2LPTimerSetRxTimerMs(float fDesiredMsec)
 {

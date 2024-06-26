@@ -6,12 +6,12 @@
  * @brief   Configuration and management of S2-LP General functionalities.
  */
 
-#ifndef IEEE802154_S2_LP_GENERAL_H_
-#define IEEE802154_S2_LP_GENERAL_H_
+#ifndef IEEE802154_S2LP_GENERAL_H_
+#define IEEE802154_S2LP_GENERAL_H_
 
-#include "ieee802154_s2-lp_registers.h"
-#include "ieee802154_s2-lp_types.h"
-#include "ieee802154_s2-lp_core_spi.h"
+#include "ieee802154_s2lp_registers.h"
+#include "ieee802154_s2lp_types.h"
+#include "ieee802154_s2lp_core_spi.h"
 
 /**
  * @brief  S2LP version type enumeration

@@ -22,8 +22,8 @@
  *
  */
 
-#include "ieee802154_s2-lp_radio.h"
-#include "ieee802154_s2-lp_config.h"
+#include "ieee802154_s2lp_radio.h"
+#include "ieee802154_s2lp_config.h"
 
 #define MAX_PA_VALUE                    14
 #define MIN_PA_VALUE                    -31

@@ -6,8 +6,8 @@
  * @brief This file  contains all the registers address and masks.
  */
 
-#ifndef IEEE802154_S2_LP_REGISTERS_H_
-#define IEEE802154_S2_LP_REGISTERS_H_
+#ifndef IEEE802154_S2LP_REGISTERS_H_
+#define IEEE802154_S2LP_REGISTERS_H_
 
 
 /**

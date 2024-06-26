@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_qi.h"
+#include "ieee802154_s2lp_qi.h"
 
 #define IS_RSSI_MODE(MODE)            (MODE<=3)
 #define IS_RSSI_DBM(VAL)              ((VAL>=-146) && (VAL<=-2))

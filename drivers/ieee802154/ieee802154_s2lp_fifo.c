@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_fifo.h"
+#include "ieee802154_s2lp_fifo.h"
 
 #define IS_FIFO_THR(VAL)  (VAL<=128)
 

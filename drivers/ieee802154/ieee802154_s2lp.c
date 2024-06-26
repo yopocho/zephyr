@@ -18,7 +18,7 @@
  * <h2><center>&copy; COPYRIGHT 2021 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp.h"
+#include "ieee802154_s2lp.h"
 
 LOG_MODULE_REGISTER(ieee802154_s2lp, CONFIG_IEEE802154_DRIVER_LOG_LEVEL);
 

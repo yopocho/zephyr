@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_general.h"
+#include "ieee802154_s2lp_general.h"
 
 #define IS_MODE_EXT(MODE)   (MODE == MODE_EXT_XO || \
                              MODE == MODE_EXT_XIN)

@@ -20,8 +20,8 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_packet_handler.h"
-#include "ieee802154_s2-lp_pkt_wmbus.h"
+#include "ieee802154_s2lp_packet_handler.h"
+#include "ieee802154_s2lp_pkt_wmbus.h"
 
 #define IS_DIRECT_TX(MODE)  (((MODE) == NORMAL_TX_MODE) || \
 			     ((MODE) == DIRECT_TX_FIFO_MODE) || \

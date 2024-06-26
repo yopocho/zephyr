@@ -8,7 +8,7 @@
 #ifndef S2LP_CORE_SPI_H_
 #define S2LP_CORE_SPI_H_
 
-#include "ieee802154_s2-lp.h"
+#include "ieee802154_s2lp.h"
 
 #define		S2LPSpiReadRegisters(...)       S2LP_ReadRegister(__VA_ARGS__)
 #define		S2LPSpiWriteRegisters(...)      S2LP_WriteRegister(__VA_ARGS__)

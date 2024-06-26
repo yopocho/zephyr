@@ -41,12 +41,12 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#ifndef IEEE80214_S2_LP_PACKET_HANDLER_H_
-#define IEEE80214_S2_LP_PACKET_HANDLER_H_
+#ifndef IEEE80214_S2LP_PACKET_HANDLER_H_
+#define IEEE80214_S2LP_PACKET_HANDLER_H_
 
-#include "ieee802154_s2-lp_registers.h"
-#include "ieee802154_s2-lp_types.h"
-#include "ieee802154_s2-lp_core_spi.h"
+#include "ieee802154_s2lp_registers.h"
+#include "ieee802154_s2lp_types.h"
+#include "ieee802154_s2lp_core_spi.h"
 
 /**
  * @brief  CRC length in bytes enumeration.

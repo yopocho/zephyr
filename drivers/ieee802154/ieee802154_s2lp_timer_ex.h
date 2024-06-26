@@ -35,7 +35,7 @@
 #ifndef IEEE802154_S2_LP_TIMER_EX_H_
 #define IEEE802154_S2_LP_TIMER_EX_H_
 
-#include "ieee802154_s2-lp_core_spi.h"
+#include "ieee802154_s2lp_core_spi.h"
 
 void S2LPTimerSetRxTimerMs(float fDesiredMsec);
 void S2LPTimerGetRxTimer(float* pfTimeoutMsec, uint8_t* pcCounter , uint8_t* pcPrescaler);

@@ -44,12 +44,12 @@
  * passed argument in dBm because the function performs an approximation.
  */
 
-#ifndef IEEE802154_S2_LP_RADIO_H_
-#define IEEE802154_S2_LP_RADIO_H_
+#ifndef IEEE802154_S2LP_RADIO_H_
+#define IEEE802154_S2LP_RADIO_H_
 
-#include "ieee802154_s2-lp_registers.h"
-#include "ieee802154_s2-lp_types.h"
-#include "ieee802154_s2-lp_core_spi.h"
+#include "ieee802154_s2lp_registers.h"
+#include "ieee802154_s2lp_types.h"
+#include "ieee802154_s2lp_core_spi.h"
 
 /**
  * @brief  S2LP Modulation enumeration

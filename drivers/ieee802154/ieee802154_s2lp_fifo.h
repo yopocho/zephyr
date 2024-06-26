@@ -11,12 +11,12 @@
  * interrupts or to get the total number of elements inside the FIFO.
  */
 
-#ifndef IEEE802154_S2_LP_FIFO_H_
-#define IEEE802154_S2_LP_FIFO_H_
+#ifndef IEEE802154_S2LP_FIFO_H_
+#define IEEE802154_S2LP_FIFO_H_
 
-#include "ieee802154_s2-lp_registers.h"
-#include "ieee802154_s2-lp_types.h"
-#include "ieee802154_s2-lp_core_spi.h"
+#include "ieee802154_s2lp_registers.h"
+#include "ieee802154_s2lp_types.h"
+#include "ieee802154_s2lp_core_spi.h"
 
 uint8_t S2LPFifoReadNumberBytesRxFifo(void);
 uint8_t S2LPFifoReadNumberBytesTxFifo(void);

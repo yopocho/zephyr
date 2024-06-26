@@ -21,7 +21,7 @@
  *
  */
 
-#include "ieee802154_s2-lp_gpio.h"
+#include "ieee802154_s2lp_gpio.h"
 
 #define IS_S2LP_GPIO(PIN)  ((PIN == S2LP_GPIO_0) || \
                               (PIN == S2LP_GPIO_1) || \

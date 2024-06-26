@@ -4,8 +4,8 @@
  * 
 */
 
-#ifndef IEEE802154_S2_LP_TYPES_H_
-#define IEEE802154_S2_LP_TYPES_H_
+#ifndef IEEE802154_S2LP_TYPES_H_
+#define IEEE802154_S2LP_TYPES_H_
 
 #include <stdint.h>
 #include <stdio.h>

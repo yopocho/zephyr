@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_commands.h"
+#include "ieee802154_s2lp_commands.h"
 
 #define IS_S2LP_CMD(CMD)  (CMD == CMD_TX || \
                              CMD == CMD_RX || \

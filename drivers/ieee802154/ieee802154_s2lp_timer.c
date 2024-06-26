@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_config.h"
+#include "ieee802154_s2lp_config.h"
 
 #define LDC_FREQ_CLK            S2LPTimerGetRcoFrequency()
 

@@ -20,7 +20,7 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_csma.h"
+#include "ieee802154_s2lp_csma.h"
 
 #define IS_CCA_PERIOD(PERIOD)   (PERIOD == CSMA_PERIOD_64TBIT || \
 				 PERIOD == CSMA_PERIOD_128TBIT || \

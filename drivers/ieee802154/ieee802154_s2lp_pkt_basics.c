@@ -20,8 +20,8 @@
  * <h2><center>&copy; COPYRIGHT 2019 STMicroelectronics</center></h2>
  */
 
-#include "ieee802154_s2-lp_pkt_basics.h"
-#include "ieee802154_s2-lp_pkt_wmbus.h"
+#include "ieee802154_s2lp_pkt_basics.h"
+#include "ieee802154_s2lp_pkt_wmbus.h"
 
 #define PKT_FORMAT_BASIC_CODE                   0x00
 
