@@ -24,6 +24,8 @@ LOG_MODULE_REGISTER(ieee802154_s2lp, CONFIG_IEEE802154_DRIVER_LOG_LEVEL);
 
 #define MAX_RCO_ERR 3
 
+static const struct device *const dev = DEVICE_DT_INST_GET(DT_PHANDLE(ZEPHYR_USER_NODE, s2lp));
+
 /*!
  * @brief IO function pointer structure
  */
@@ -51,7 +53,7 @@ int32_t S2LP_RegisterBusIO(S2LP_IO_t *pIO)
 * @param  dev: Devicetree handle for s2-lp radio
 * @return a value from spi_write().
 */ 
-int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, const struct device *dev) {
+int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes) {
 
   const struct s2lp_config *config = dev->config;
 
@@ -89,7 +91,7 @@ int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes, cons
 }
 
 /** Driver Initialization */
-int32_t S2LP_Init(const struct device *dev)
+int32_t S2LP_Init()
 {
   // Leaving this codeblock here while figuring out what to do with it
 
@@ -120,7 +122,7 @@ int32_t S2LP_Init(const struct device *dev)
     LOG_ERR("SPI bus %s is not ready", config->bus);
     return -ENODEV
   }
-  
+
   S2LPCmdStrobeSres();
   
   /*IRQ setup and init for S2LP GPIOs*/
@@ -248,13 +250,13 @@ int32_t S2LP_Init(const struct device *dev)
 * @param  pcBuffer: pointer to the buffer of values have to be written into registers
 * @retval Device status
 */ 
-uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
+uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer)
 {
     uint8_t header[S2LP_CMD_SIZE]={WRITE_HEADER,cRegAddress};
     uint16_t status;
   
     // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-    s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
+    s2lp_write_reg(header, pcBuffer, cNbBytes);
     
 
     ((uint8_t*)&status)[1]=header[0];
@@ -270,13 +272,13 @@ uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBu
 * @param  pcBuffer: pointer to the buffer of registers' values read
 * @retval Device status
 */
-uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
+uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer)
 {
     uint8_t header[S2LP_CMD_SIZE]={READ_HEADER,cRegAddress};
     uint16_t status;
 
     // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-    s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
+    s2lp_write_reg(header, pcBuffer, cNbBytes);
 
     ((uint8_t*)&status)[1]=header[0];
     ((uint8_t*)&status)[0]=header[1]; 
@@ -289,13 +291,13 @@ uint16_t S2LP_ReadRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuf
 * @param  cCommandCode: command code to be sent
 * @retval Device status
 */
-uint16_t S2LP_SendCommand(uint8_t cCommandCode, const struct device *dev)
+uint16_t S2LP_SendCommand(uint8_t cCommandCode)
 {
   uint8_t header[S2LP_CMD_SIZE]={COMMAND_HEADER,cCommandCode};
   uint16_t status;
 
   // IO_func.WriteBuffer( header, NULL, 0 );
-  s2lp_write_reg(header, NULL, 0, dev);
+  s2lp_write_reg(header, NULL, 0);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -309,13 +311,13 @@ uint16_t S2LP_SendCommand(uint8_t cCommandCode, const struct device *dev)
 * @param  pcBuffer: pointer to data to write
 * @retval Device status
 */
-StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
+StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
 {
   uint8_t header[S2LP_CMD_SIZE]={WRITE_HEADER,LINEAR_FIFO_ADDRESS};
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-  s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
+  s2lp_write_reg(header, pcBuffer, cNbBytes);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -330,13 +332,13 @@ StatusBytes S2LP_WriteFIFO(uint8_t cNbBytes, uint8_t* pcBuffer, const struct dev
 * @param  pcBuffer: pointer to data read from RX FIFO
 * @retval Device status
 */
-StatusBytes S2LP_ReadFIFO(uint8_t cNbBytes, uint8_t* pcBuffer, const struct device *dev)
+StatusBytes S2LP_ReadFIFO(uint8_t cNbBytes, uint8_t* pcBuffer)
 {
   uint8_t header[S2LP_CMD_SIZE]={READ_HEADER,LINEAR_FIFO_ADDRESS};
   StatusBytes status;
 
   // IO_func.WriteBuffer( header, pcBuffer, cNbBytes );
-  s2lp_write_reg(header, pcBuffer, cNbBytes, dev);
+  s2lp_write_reg(header, pcBuffer, cNbBytes);
   
   ((uint8_t*)&status)[1]=header[0];
   ((uint8_t*)&status)[0]=header[1];
@@ -418,25 +420,37 @@ void S2LP_TCXOInit(void)
   S2LP_WriteRegister(XO_RCO_CONF0_ADDR, 1, &tmp);
 }
 
-//TODO: BIG TODO: implement these mandatory zephyr api features. See ieee802154_b91.c and perhaps ieee802154_cc1200.c :)
-// https://docs.zephyrproject.org/apidoc/latest/structieee802154__radio__api.html
-static const struct ieee802154_radio_api s2lp_radio_api = {
-	.iface_api.init	= s2lp_iface_init,
-	.get_capabilities	= s2lp_get_capabilities,
-	.cca			= s2lp_cca,
-	.set_channel		= s2lp_set_channel,
-	.set_txpower		= s2lp_set_txpower,
-	.tx			= s2lp_tx,
-	.start			= s2lp_start,
-	.stop			= s2lp_stop,
-	.attr_get		= s2lp_attr_get,
-};
+// //TODO: BIG TODO: implement these mandatory zephyr api features. See ieee802154_b91.c and perhaps ieee802154_cc1200.c :)
+// // https://docs.zephyrproject.org/apidoc/latest/structieee802154__radio__api.html
+// static const struct ieee802154_radio_api s2lp_radio_api = {
+// 	.iface_api.init	= s2lp_iface_init,
+// 	.get_capabilities	= s2lp_get_capabilities,
+// 	.cca			= s2lp_cca,
+// 	.set_channel		= s2lp_set_channel,
+// 	.set_txpower		= s2lp_set_txpower,
+// 	.tx			= s2lp_tx,
+// 	.start			= s2lp_start,
+// 	.stop			= s2lp_stop,
+// 	.attr_get		= s2lp_attr_get,
+// };
 
 static const struct s2lp_config s2lp_cfg = {
     .bus = SPI_DT_SPEC_INST_GET(0, SPI_WORD_SET(8) | SPI_TRANSFER_MSB, 0),
     .sdn = GPIO_DT_SPEC_INST_GET(0, sdn_gpios),
     .interrupt = GPIO_DT_SPEC_INST_GET(0, int_gpios)
 };
+
+//TODO: Runtime device info, see s2lp_context in ieee802154_s2-lp.h
+// static struct s2lp_context s2lp_data {
+//     .iface = NULL,
+//     .rx_tx_cb = {},
+//     .mac_addr = {},
+//     .rf_settings = {},
+//     .tx_sync = {},
+//     .tx = {},
+//     .tx_start = {},
+// };
+// }
 
 //TODO: s2lp_data is currently irrelevant, a solution between the driver and zephyr is probably needed here
 DEVICE_DT_INST_DEFINE(0, &S2LP_Init, NULL, &s2lp_data, &s2lp_cfg, 

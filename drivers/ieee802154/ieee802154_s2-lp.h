@@ -31,26 +31,38 @@
  * <h2><center>&copy; COPYRIGHT 2021 STMicroelectronics</center></h2>
  */
 
-#ifndef IEEE802154_S2_LP_H_
-#define IEEE802154_S2_LP_H_
+#ifndef IEEE802154_S2LP_H_
+#define IEEE802154_S2LP_H_
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "ieee802154_s2-lp_registers.h"
-#include "ieee802154_s2-lp_commands.h"
-#include "ieee802154_s2-lp_csma.h"
-#include "ieee802154_s2-lp_gpio.h"
-#include "ieee802154_s2-lp_timer.h"
-#include "ieee802154_s2-lp_fifo.h"
-#include "ieee802154_s2-lp_radio.h"
-#include "ieee802154_s2-lp_qi.h"
-#include "ieee802154_s2-lp_types.h"
+#include <errno.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/arch/cpu.h>
+#include <zephyr/debug/stack.h>
+
 #include <zephyr/device.h>
-#include <zephyr/drivers/spi.h>
-#include <zephyr/logging/log.h>
+#include <zephyr/init.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_pkt.h>
+
+#include <zephyr/sys/byteorder.h>
+#include <string.h>
+#include <zephyr/random/random.h>
+
+#include <zephyr/sys/atomic.h>
+
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/spi.h>
+
+#include "ieee802154_s2lp_registers.h"
+#include "ieee802154_s2lp_commands.h"
+#include "ieee802154_s2lp_csma.h"
+#include "ieee802154_s2lp_gpio.h"
+#include "ieee802154_s2lp_timer.h"
+#include "ieee802154_s2lp_fifo.h"
+#include "ieee802154_s2lp_radio.h"
+#include "ieee802154_s2lp_qi.h"
+#include "ieee802154_s2lp_types.h"
 
 typedef S2LPStatus StatusBytes;
 
@@ -111,26 +123,27 @@ typedef struct
 
 
 struct s2lp_config_base {
-  uint32_t lFrequencyBase = 868300000;
-  uint32_t ModulationSelect = MOD_ASK_OOK;
-  uint32_t lDatarate = 125000;
-  uint32_t lFreqDev = 62500;
-  uint32_t lBandwidt = 100000;
-  // config->my_addr,
-  // config->multicast_addr,
-  // config->broadcast_addr
+  uint32_t lFrequencyBase;
+  uint32_t ModulationSelect;
+  uint32_t lDatarate;
+  uint32_t lFreqDev;
+  uint32_t lBandwidt;
+  uint8_t my_addr[8];
+  uint8_t multicast_addr[8];
+  uint8_t broadcast_addr[8];
 };
 
+//TODO: fix my_addr, multicast_addr, broadcast_addr, they're supposed to be somewhere rather else than here
 #ifdef CONFIG_IEEE802154_S2LP_DEFAULT_PRESET
 struct s2lp_config_base s2lp_base_config {
   .lFrequencyBase = 868300000;
-  .ModulationSelect = MOD_ASK_OOK;
+  .ModulationSelect = MOD_2FSK;
   .lDatarate = 125000;
   .lFreqDev = 62500;
   .lBandwidt = 100000;
-  // config->my_addr,
-  // config->multicast_addr,
-  // config->broadcast_addr
+  uint8_t my_addr[8] = {0x00,0x00,0x00,0x00,CONFIG_IEEE802154_MAC4,CONFIG_IEEE802154_MAC5,CONFIG_IEEE802154_MAC6,CONFIG_IEEE802154_MAC7};
+  uint8_t multicast_addr[8];
+  uint8_t broadcast_addr[8];
 };
 #endif
 
@@ -138,18 +151,27 @@ struct s2lp_config {
   struct spi_dt_spec bus;
   struct gpio_dt_spec sdn;
   struct gpio_dt_spec interrupt;
-
-  //TODO: zephyr CONFIG settings
-  /**
-   * Find appropriate place for these in some other struct, high importance TODOTODOTODO FIXME
-   * VERY possibly that these might just have to be config options in Kconfig.s2-lp!
-   * cc1200 does something similar where it uses presets with preset known messages for easy setting registers.
-   * If I want fine control of all the radio setttings I'll either need functions for each setting to convert and
-   * set that specific setting (although reuse of some register set functions might be possible),
-   * or I'm going to need a giant header file of lookup tables that convert setting to register value/cmd
-   * which is what cc1200 does.
-  */
 };
+
+//TODO: Runtime device information
+// struct s2lp_context {
+//   struct net_if *iface;
+// 	/**************************/
+// 	struct gpio_callback rx_tx_cb;
+// 	uint8_t mac_addr[8];
+// 	/************RF************/
+// 	const struct cc1200_rf_registers_set *rf_settings;
+// 	/************TX************/
+// 	struct k_sem tx_sync;
+// 	atomic_t tx;
+// 	atomic_t tx_start;
+// 	/************RX************/
+// 	K_KERNEL_STACK_MEMBER(rx_stack,
+// 			      CONFIG_IEEE802154_CC1200_RX_STACK_SIZE);
+// 	struct k_thread rx_thread;
+// 	struct k_sem rx_lock;
+// 	atomic_t rx;
+// }
 
 /*Structure to manage External PA */
 typedef enum
@@ -185,6 +207,7 @@ int32_t S2LP_RegisterBusIO (S2LP_IO_t *pIO);
  */
 int32_t S2LP_Init( void );
 
+int s2lp_write_reg(uint8_t *pcHeader, uint8_t *pcBuffer, uint16_t cNbBytes);
 
 uint16_t S2LP_WriteRegister(uint8_t cRegAddress, uint8_t cNbBytes, uint8_t* pcBuffer );
 
